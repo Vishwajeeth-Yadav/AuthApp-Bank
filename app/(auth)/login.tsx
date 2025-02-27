@@ -251,7 +251,7 @@ export default function Login(): JSX.Element {
     try {
       const res = await axios.post("https://dev.safeaven.com/api/login", { email, password });
       if (res.status === 200) {
-        await AsyncStorage.setItem("jwt_token", res.data.token);
+        await AsyncStorage.setItem("jwt_token", res.data.jwt);
         Alert.alert("Success", "Login Successful!");
         router.push("/(app)/Dashboard");
       } else {
