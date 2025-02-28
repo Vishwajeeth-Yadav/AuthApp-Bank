@@ -1,7 +1,22 @@
+import React from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { Button } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 import DashboardCard from "@/components/DashboardCard";
 
 export default function Dashboard() {
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear();
+      router.replace("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Welcome Back, User 👋</Text>
@@ -23,6 +38,11 @@ export default function Dashboard() {
         <Text style={styles.activityText}>🕒 Your subscription renews in 3 days.</Text>
         <Text style={styles.activityText}>📢 New update available for your profile.</Text>
       </View>
+
+      {/* Logout Button */}
+      <Button mode="contained" onPress={handleLogout} style={styles.logoutButton}>
+        Logout
+      </Button>
     </ScrollView>
   );
 }
@@ -65,5 +85,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#555",
     marginBottom: 5,
+  },
+  logoutButton: {
+    marginTop: 30,
+    backgroundColor: "#d32f2f",
+    paddingVertical: 8,
+    borderRadius: 5,
   },
 });

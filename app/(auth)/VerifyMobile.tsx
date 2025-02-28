@@ -22,7 +22,7 @@ export default function VerifyMobile(): JSX.Element {
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true);
 
   // Mask mobile number, showing only the last 4 digits
-  const maskedMobile = mobile ? `XXXXXXXX${mobile.slice(-4)}` : "XXXXXXXXXX";
+  const maskedMobile = mobile ? `XXXXXX${mobile.slice(-4)}` : "XXXXXXXXXX";
 
   useEffect(() => {
     const checkAuth = async () => {

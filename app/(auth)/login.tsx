@@ -211,14 +211,14 @@
 
 
 import { useState } from "react";
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  Alert, 
-  StyleSheet, 
-  ActivityIndicator, 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
+  ActivityIndicator,
   Image,
   Dimensions,
   KeyboardAvoidingView,
@@ -228,6 +228,7 @@ import { useRouter } from "expo-router";
 import axios from "axios";
 import * as Google from "expo-auth-session/providers/google";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { checkUserProgress } from "./utils/checkUserProgress";
 
 export default function Login(): JSX.Element {
   const router = useRouter();
@@ -249,11 +250,12 @@ export default function Login(): JSX.Element {
 
     setLoading(true);
     try {
+      
       const res = await axios.post("https://dev.safeaven.com/api/login", { email, password });
       if (res.status === 200) {
         await AsyncStorage.setItem("jwt_token", res.data.jwt);
         Alert.alert("Success", "Login Successful!");
-        router.push("/(app)/Dashboard");
+        await checkUserProgress(res.data.jwt)
       } else {
         throw new Error("Unexpected response from server.");
       }
@@ -289,12 +291,10 @@ export default function Login(): JSX.Element {
         });
 
         if (response.status === 200) {
-          const token = response.data.token; 
+          const token = response.data.token;
           await AsyncStorage.setItem("jwt_token", token);
           Alert.alert("Success", "Logged in with Google!");
-
-          // Redirect to EnterMobile instead of Dashboard
-          router.push("/(auth)/EnterMobile");
+          await checkUserProgress(token)
         } else {
           throw new Error("Unexpected response from server.");
         }
@@ -317,9 +317,9 @@ export default function Login(): JSX.Element {
     >
       {/* Header */}
       <View style={styles.header}>
-        <Image 
-          source={require("../../assets/images/favicon.png")} 
-          style={styles.logo} 
+        <Image
+          source={require("../../assets/images/favicon.png")}
+          style={styles.logo}
           resizeMode="contain"
         />
         <Text style={styles.headerTitle}>SafeHaven</Text>
@@ -350,9 +350,9 @@ export default function Login(): JSX.Element {
           secureTextEntry
         />
 
-        <TouchableOpacity 
-          style={[styles.button, loading && styles.buttonDisabled]} 
-          onPress={handleLogin} 
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handleLogin}
           disabled={loading}
         >
           {loading ? <ActivityIndicator color="white" /> : <Text style={styles.buttonText}>Sign In</Text>}
@@ -370,9 +370,9 @@ export default function Login(): JSX.Element {
         </View>
 
         {/* Google Login Button */}
-        <TouchableOpacity 
-          style={[styles.googleButton, googleLoading && styles.buttonDisabled]} 
-          onPress={handleGoogleLogin} 
+        <TouchableOpacity
+          style={[styles.googleButton, googleLoading && styles.buttonDisabled]}
+          onPress={handleGoogleLogin}
           disabled={googleLoading}
         >
           {googleLoading ? (
